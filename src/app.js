@@ -9,10 +9,10 @@ const swaggerSpec = require('./docs/swagger');
 const app = express();
 
 app.use(express.json());
-app.use('/api/movies', movieReviewRoutes);
+app.use('/api/movies', movieReviewRoutes);     
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJsdoc(swaggerSpec)));
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 const DB_URL = process.env.mongodburl;
 
 mongoose.connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
