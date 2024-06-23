@@ -2,8 +2,18 @@
 
 const express = require('express');
 const movieController = require('../controllers/movieReviewController');
-
+const { validateReview, validateReviewId } = require('../middleware/movieReviewValidator')
 const router = express.Router();
+const { validationResult } = require('express-validator');
+
+// Middleware to handle validation errors
+const handleValidationErrors = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  };
 
 /**
  * @swagger
@@ -68,7 +78,7 @@ const router = express.Router();
  *       500:
  *         description: Some server error
  */
-router.post('/', movieController.createReview);
+router.post('/',validateReview, handleValidationErrors, movieController.createReview);
 
 /**
  * @swagger
@@ -111,7 +121,7 @@ router.get('/', movieController.getAllReviews);
  *       404:
  *         description: The movie review was not found
  */
-router.get('/:id', movieController.getReviewById);
+router.get('/:id', validateReviewId, handleValidationErrors,movieController.getReviewById);
 
 /**
  * @swagger
@@ -144,7 +154,7 @@ router.get('/:id', movieController.getReviewById);
  *       500:
  *         description: Some error happened
  */
-router.put('/:id', movieController.updateReview);
+router.put('/:id',validateReviewId, handleValidationErrors, movieController.updateReview);
 
 /**
  * @swagger
@@ -165,6 +175,6 @@ router.put('/:id', movieController.updateReview);
  *       404:
  *         description: The movie review was not found
  */
-router.delete('/:id', movieController.deleteReview);
+router.delete('/:id',validateReviewId, handleValidationErrors, movieController.deleteReview);
 
 module.exports = router;
